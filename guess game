@@ -1,0 +1,56 @@
+#Guess the word from list of words under different Categories
+
+import random
+
+print("Welcome to GUESS THE WORD app!!")
+
+gamedict={'sports':['cricket','badminton','basketball','hockey','tennis','shooting','volleyball'],
+          'food':['pizza','pasta','maggi','burger','sandwich','cookies','salad','indian','mexican'],
+          'colors':['pink','red','orange','green','violet','blue','yellow','gray','olive','white'],
+          'country':['india','usa','china','germany','france','italy','uk','nepal','malaysia','singapore'],
+          'subject':['mathmatics','history','english','arts','hindi','geography','science','computers',]    
+    }
+
+gamekeys=[]
+for key in gamedict.keys():
+    gamekeys.append(key)
+
+playing=True
+while playing:
+    game_category=gamekeys[random.randint(0, len(gamekeys)-1)]
+    game_word=gamedict[game_category][random.randint(0,len(gamedict[game_category])-1)]
+    blank_word=[]
+    for letter in game_word:
+        blank_word.append("_")
+    print(f"Guess a {str(len(game_word))} letter word from the category: {game_category}")
+    guess=''
+    guess_count=0
+    while guess != game_word:
+        print("".join(blank_word))
+        guess=input("\n Enter your guess: ").lower()
+        guess_count+=1
+        
+        if guess==game_word:
+            print(f"You have guessed the correct word in {str(guess_count)} attempts")
+            break
+        elif guess_count<len(game_word):
+            print(f"Try again with another hint")
+        elif guess_count ==len(game_word):
+            print(f"\n The correct word is: {game_word}")
+            print(f"\nAttempts Over")
+            break
+        swapping=True
+        while swapping:
+            letter_index = random.randint(0, len(game_word)-1)
+            if blank_word[letter_index] == "_":
+                blank_word[letter_index] = game_word[letter_index]
+                swapping = False
+    choice=input("would you like to play again (y/n): ")
+    if choice.lower()[0]!='y':
+        playing=False
+        print()
+        print('Hope you enjoyed the game')
+        
+            
+    
+    
