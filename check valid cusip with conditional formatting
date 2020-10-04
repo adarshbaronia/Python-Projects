@@ -1,0 +1,33 @@
+import pandas as pd
+import stdnum
+import numpy as np
+pd.options.display.width = 0
+pd.options.display.max_rows=100
+
+#Reading file
+cusip = pd.read_excel('FILEPATH/Pref Unref.xlsx', index =False)
+cusip=cusip.astype('str')
+
+#adding conditional formatting
+df = cusip.style.apply(lambda x: ['background-color : none' if stdnum.cusip.is_valid(v)==True and len(v)==9 else 'background-color : red' for v in x])
+writer = pd.ExcelWriter('FILEPATH/pandas_conditional.xlsx', engine='xlsxwriter')
+df.to_excel(writer, sheet_name='Pref Unref', index=False)
+workbook = writer.book
+worksheet = writer.sheets['Pref Unref']
+
+#Auto adjusting column width based on column content
+
+for i, col in enumerate(cusip.columns):
+    # find length of column i
+    column_len = cusip[col].astype(str).str.len().max()
+    # Setting the length if the column header is larger
+    # than the max column value length
+    column_len = max(column_len, len(col))
+    # set the column length
+    worksheet.set_column(i, i, column_len)
+writer.save()
+
+
+
+
+                
