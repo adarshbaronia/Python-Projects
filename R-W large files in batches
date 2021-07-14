@@ -1,0 +1,26 @@
+import pandas as pd
+
+enum = pd.read_csv('EnumFile')
+
+enum_dict = dict(zip(enum.Abbreviation, enum['Full form']))
+
+def matcher(k):
+    x = (i for i in enum_dict if i in k.split(' '))
+    return ' | '.join(map(enum_dict.get, x))
+
+counter = 0
+chunk_size = 10**6
+header = True
+for data in pd.read_csv('LargeFileName', delimiter='\t', index_col=0, chunksize=chunk_size):
+    
+    data['Issuer_Name_Comb'] = data['ISSUER_NAME_1'].astype(str)+' '+data['ISSUER_NAME_2'].astype(str)+' '+data['ISSUER_NAME_3'].astype(str)
+    data['Issue_Desc_Comb'] = data['ISSUE_DESC_1'].astype(str)+' '+data['ISSUE_DESC_2'].astype(str)
+    data['Issuer_Name_Comb'] = data['Issuer_Name_Comb'].str.strip()
+    data['Issue_Desc_Comb'] = data['Issue_Desc_Comb'].str.strip()
+    data['UOP']=''
+    data['UOP_IssuerName'] = data['Issuer_Name_Comb'].map(matcher)
+    data['UOP_IssueDesc'] = data['Issue_Desc_Comb'].map(matcher)
+    #data.to_csv('data_output_'+str(chunksize)+'.csv')       
+    counter = counter + 1
+    data.to_csv(f'UOP_{str(counter)}.csv.gz',compression='gzip',index=True)
+    print(f'UOP_{str(counter)}.csv.gz')
